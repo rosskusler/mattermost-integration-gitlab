@@ -252,6 +252,7 @@ EVENT_CLASS_MAP = {
     constants.TAG_EVENT: TagEvent,
     constants.COMMENT_EVENT: NoteEvent,
     constants.MERGE_EVENT: MergeEvent,
+    constants.BUILD_EVENT: BuildEvent,
 }
 
 

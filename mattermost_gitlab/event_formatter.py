@@ -228,7 +228,52 @@ class MergeEvent(BaseEvent):
 
         return fix_gitlab_links(base_url, text)
 
+class BuildEvent(BaseEvent):
 
+    @property
+    def action(self):
+        return self.data['object_attributes']['action']
+
+    def format(self):
+
+        if self.action == 'open':
+            text_action = 'created a'
+        elif self.action == 'reopen':
+            text_action = 'reopened a'
+        elif self.action == 'update':
+            text_action = 'updated a'
+        elif self.action == 'merge':
+            text_action = 'accepted a'
+        elif self.action == 'close':
+            text_action = 'closed a'
+        else:
+            raise NotImplementedError('Unsupported action %s for build event' % self.action)
+
+        text = '#### [!%s - %s](%s)\n*[%s](%s) %s build request in [%s](%s) on [%s](%s)*' % (
+            self.data['object_attributes']['iid'],
+            self.data['object_attributes']['title'],
+            self.data['object_attributes']['url'],
+            self.data['user']['username'],
+            self.gitlab_user_url(self.data['user']['username']),
+            text_action,
+            self.data['object_attributes']['target']['name'],
+            self.data['object_attributes']['target']['web_url'],
+            self.data['object_attributes']['created_at'],
+            self.data['object_attributes']['url']
+        )
+
+        if self.action == 'open':
+            description = add_markdown_quotes(self.data['object_attributes']['description'])
+            text = '%s\n %s' % (
+                text,
+                description
+            )
+
+        base_url = self.data['object_attributes']['target']['web_url']
+
+        return fix_gitlab_links(base_url, text)
+        
+        
 class CIEvent(BaseEvent):
 
     def __init__(self, data):

@@ -235,7 +235,8 @@ class BuildEvent(BaseEvent):
         return self.data['object_attributes']['action']
 
     def format(self):
-
+        text = json.dumps(self.__dict__)
+/*        
         if self.action == 'open':
             text_action = 'created a'
         elif self.action == 'reopen':
@@ -272,7 +273,8 @@ class BuildEvent(BaseEvent):
         base_url = self.data['object_attributes']['target']['web_url']
 
         return fix_gitlab_links(base_url, text)
-        
+*/
+        return text
         
 class CIEvent(BaseEvent):
 
